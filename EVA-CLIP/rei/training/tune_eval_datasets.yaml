@@ -1,0 +1,20 @@
+
+- name: ret_flickr
+  json_file:  data/cache/flickr30k/annotations/test.json
+  img_root:  data/cache/flickr30k/
+  text_feature_path:  fusemix/EVA-CLIP/data/flickr30k_test_llm_features.dpt
+
+- name: ret_coco
+  json_file:  data/cache/coco/annotations/coco_karpathy_test.json
+  img_root:  data/cache/coco/images/
+  text_feature_path:  fusemix/EVA-CLIP/data/coco_test_llm_features.dpt
+
+- name: sharegpt4v
+  json_file:  data/cache/sharegpt4v/annotations/validation_1k.json
+  img_root:  data/cache/sharegpt4v/
+  text_feature_path:  data/cache/features/Llama_feature_extractor/8b/sharegpt4v_caption/test.dpt 
+
+- name: Urban1k
+  json_file:  data/cache/Urban1k/annotations/test.json
+  img_root:   data/cache/Urban1k/
+  text_feature_path:  data/cache/features/Llama_feature_extractor/8b/Urban1k/test.dpt 
