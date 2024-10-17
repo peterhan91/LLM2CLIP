@@ -11,7 +11,7 @@ conda create -n llm2clip python=3.8
 conda activate llm2clip
 
 pip install -r requirements.txt
-```
+```·
 ### Data Preparation (Coming Soon) 
 ### 🔥 Training  
 ```sh run.sh```
