@@ -1,5 +1,5 @@
 {
-    "embed_dim": 768,
+    "embed_dim": 1280,
     "vision_cfg": {
         "image_size": 224,
         "layers": 24,
@@ -18,6 +18,7 @@
         "subln": true
     },
     "text_cfg": {
+        "use_embedding": true,
         "context_length": 77,
         "vocab_size": 49408,
         "width": 768,

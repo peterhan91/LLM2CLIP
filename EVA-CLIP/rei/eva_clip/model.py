@@ -19,7 +19,7 @@ except:
 from .modified_resnet import ModifiedResNet
 from .timm_model import TimmModel
 from .eva_vit_model import EVAVisionTransformer
-from .transformer import LayerNorm, QuickGELU, Attention, VisionTransformer, TextTransformer
+from .transformer import LayerNorm, QuickGELU, Attention, VisionTransformer, TextTransformer, LayerNormFp32
 
 try:
     from apex.normalization import FusedLayerNorm
@@ -46,8 +46,8 @@ class CLIPVisionCfg:
     global_average_pool: bool = False # whether to global average pool the last embedding layer, instead of using CLS token (https://arxiv.org/abs/2205.01580)
     drop_path_rate: Optional[float] = None  # drop path rate
     timm_model_name: str = None  # a valid model name overrides layers, width, patch_size
-    timm_model_pretrained: bool = False  # use (imagenet) pretrained weights for named model
-    timm_pool: str = 'avg'  # feature pooling for timm model ('abs_attn', 'rot_attn', 'avg', '')
+    timm_model_pretrained: bool = True  # use (imagenet) pretrained weights for named model
+    timm_pool: str = 'token'  # feature pooling for timm model ('abs_attn', 'rot_attn', 'avg', '')
     timm_proj: str = 'linear'  # linear projection for timm model output ('linear', 'mlp', '')
     timm_proj_bias: bool = False  # enable bias final projection
     eva_model_name: str = None # a valid eva model name overrides layers, width, patch_size
@@ -103,7 +103,6 @@ def _build_vision_tower(
     # memory efficient in recent PyTorch releases (>= 1.10).
     # NOTE: timm models always use native GELU regardless of quick_gelu flag.
     act_layer = QuickGELU if quick_gelu else nn.GELU
-
     if vision_cfg.eva_model_name:
         vision_heads = vision_cfg.width // vision_cfg.head_width
         norm_layer = LayerNorm
@@ -220,28 +219,20 @@ class LinearBlock(nn.Module):
             nn.Dropout(dropout),
             nn.Linear(int(expansion_factor * dim), dim),
         )
-        # self.ln = nn.LayerNorm(dim)
         self.ln = norm_layer(dim)
 
     def forward(self, x):
         return x + self.fn(self.ln(x))
     
 class TextProj(nn.Module):
-    def __init__(self, embedding_dim=4096, output_dim=512, norm_layer=LayerNorm):
+    def __init__(self, embedding_dim=4096, output_dim=512, expansion_factor=2, num_layers_text=4, proj_bias=True, dropout=0, norm_layer=LayerNorm):
         super().__init__()
-        # self.ln_final = norm_layer(embedding_dim)
         self.embedding_dim = embedding_dim
-        # self.text_projection = nn.Parameter(torch.empty(embedding_dim, output_dim))
-        expansion_factor = 2
-        dropout = 0
-        proj_bias = True
-        num_layers_text = 4
         self.text_adaptor = nn.Sequential(
             *[LinearBlock(embedding_dim, expansion_factor, dropout) for _ in range(num_layers_text)],
             nn.LayerNorm(embedding_dim),
             nn.Linear(embedding_dim, output_dim, bias=proj_bias),
         )
-        self.grad_checkpointing = False
     
     def lock(self, unlocked_layers, freeze_layer_norm):
         for param in self.text_adaptor.parameters():
@@ -253,9 +244,6 @@ class TextProj(nn.Module):
         
     def forward(self, text, return_all_features: bool=False):
         x = self.text_adaptor(text)
-        # x = self.ln_final(text)
-        # if not return_all_features:
-        #     x = x @ self.text_projection
         return x
     
     
@@ -270,7 +258,6 @@ class CLIP(nn.Module):
     ):
         super().__init__()
         self.visual = _build_vision_tower(embed_dim, vision_cfg, quick_gelu, cast_dtype)
-
         text = _build_text_tower(embed_dim, text_cfg, quick_gelu, cast_dtype)
         self.transformer = text.transformer
         self.vocab_size = text.vocab_size
@@ -350,9 +337,11 @@ class CustomCLIP(nn.Module):
     def no_weight_decay(self):
         return {'logit_scale'}
 
-    def encode_image(self, image, normalize: bool = False):
-        features = self.visual(image)
-        # features = self.visual.head(image)
+    def encode_image(self, image, normalize: bool = False, forward_head=False):
+        if forward_head:
+            features = self.visual.head(image)
+        else:
+            features = self.visual(image)
         return F.normalize(features, dim=-1) if normalize else features
 
     def encode_text(self, text, normalize: bool = False):
@@ -360,7 +349,7 @@ class CustomCLIP(nn.Module):
         return F.normalize(features, dim=-1) if normalize else features
 
     def forward(self, image, text):
-        image_features = self.encode_image(image, normalize=True)
+        image_features = self.encode_image(image, normalize=True, forward_head=False)
         text_features = self.encode_text(text, normalize=True)
         return image_features, text_features, self.logit_scale.exp()
 
@@ -420,6 +409,7 @@ def build_model_from_openai_state_dict(
         state_dict: dict,
         quick_gelu=True,
         cast_dtype=torch.float16,
+        custom=True,
 ):
     vit = "visual.proj" in state_dict
 
@@ -460,19 +450,30 @@ def build_model_from_openai_state_dict(
         heads=transformer_heads,
         layers=transformer_layers
     )
-    model = CLIP(
-        embed_dim,
-        vision_cfg=vision_cfg,
-        text_cfg=text_cfg,
-        quick_gelu=quick_gelu,  # OpenAI models were trained with QuickGELU
-        cast_dtype=cast_dtype,
-    )
+    embed_dim = 1280
+    if custom:
+        model  = CustomCLIP(
+            embed_dim,
+            vision_cfg=vision_cfg,
+            text_cfg=text_cfg,
+            quick_gelu=quick_gelu,  # OpenAI models were trained with QuickGELU
+            cast_dtype=cast_dtype,
+        )
+    else:
+        model = CLIP(
+            embed_dim,
+            vision_cfg=vision_cfg,
+            text_cfg=text_cfg,
+            quick_gelu=quick_gelu,  # OpenAI models were trained with QuickGELU
+            cast_dtype=cast_dtype,
+        )
 
     for key in ["input_resolution", "context_length", "vocab_size"]:
         state_dict.pop(key, None)
 
+    state_dict.pop('visual.proj')
     convert_weights_to_fp16(model)  # OpenAI state dicts are partially converted to float16
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict, strict=False)
     return model.eval()
 
 

@@ -14,6 +14,7 @@ import zipfile
 import glob
 import yaml
 from pathlib import Path
+import wids
 
 # import braceexpand
 import numpy as np
@@ -98,7 +99,8 @@ class RetrievalDataset(Dataset):
     def __getitem__(self, idx):
         images, texts = None, None
         if self.img_features is not None:
-            images = self.img_features[idx]
+            images = self.img_features[str(idx)]
+
         if self.text_features is not None:
             if isinstance(self.text_features, dict):
                 texts = np.array(self.text_features[str(idx)])
@@ -118,7 +120,7 @@ class RetrievalDataset(Dataset):
     
 class JsonDataset(Dataset):
     def __init__(self, input_filename, transforms, img_root=None, img_feature_path=None,
-                text_feature_path=None, tokenizer=None):
+                text_feature_path=None, tokenizer=None, is_wds=False):
         logging.debug(f'Loading csv data from {input_filename}.')
         
         self.meta = json.load(open(input_filename, 'r'))
@@ -144,6 +146,10 @@ class JsonDataset(Dataset):
                 # self.text_features = np.memmap(text_feature_path, dtype='float32', mode='r', 
                 #                         shape=(len(self.meta), 4096))
         self.img_root = img_root
+        if is_wds:
+            self.wds =  wids.ShardListDataset(img_root)
+        else:
+            self.wds = None
         self.transforms = transforms
         logging.debug('Done loading data.')
         self.tokenize = tokenizer
@@ -162,8 +168,14 @@ class JsonDataset(Dataset):
                 texts = self.text_features[str(idx)]
 
         if images is None:
-            image_path = os.path.join(self.img_root, self.meta[idx]['image'])
-            images = self.transforms(Image.open(image_path))
+            if self.wds is not None:
+                sample = self.wds[idx]
+                caption = sample['.json']['caption']
+                images = sample['.jpg'].convert("RGB")
+                images = self.transforms(images)
+            else:
+                image_path = os.path.join(self.img_root, self.meta[idx]['image'])
+                images = self.transforms(Image.open(image_path))
         if texts is None:
             caption = self.meta[idx]['caption']
             if self.tokenize:
@@ -265,7 +277,6 @@ def get_imagenet(args, preprocess_fns, split):
         data_path = args.imagenet_val
         text_path = args.imagenet_val_text
         preprocess_fn = preprocess_val
-    
         img_feature_path = None
         dataset = ZipDataset(data_path, text_path, img_feature_path, transform=preprocess_fn)
     else:
@@ -298,7 +309,7 @@ def get_imagenet(args, preprocess_fns, split):
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=args.batch_size,
+        batch_size=args.eval_batch_size,
         num_workers=args.workers,
         sampler=sampler,
     )
@@ -337,6 +348,9 @@ def group_by_keys_nothrow(data, keys=base_plus_ext, lcase=True, suffixes=None, h
     current_sample = None
     for filesample in data:
         assert isinstance(filesample, dict)
+        if len(filesample) ==0:
+            continue
+    
         fname, value = filesample["fname"], filesample["data"]
         prefix, suffix = keys(fname)
         if prefix is None:
@@ -445,18 +459,18 @@ class ResampledShards2(IterableDataset):
         self.deterministic = deterministic
         self.epoch = epoch
 
-    def search_urls(self, urls):
-        seach_all = []
-        for root in urls:
-            parts = os.listdir(root)
-            part_paths = [os.path.join(root, part) for part in parts]
+    # def search_urls(self, urls):
+    #     seach_all = []
+    #     for root in urls:
+    #         parts = os.listdir(root)
+    #         part_paths = [os.path.join(root, part) for part in parts]
 
-            all_paths = []
-            for part_path in part_paths:
-                temp_paths = glob.glob(os.path.join(part_path, '*.tar'))
-                all_paths.extend(temp_paths)
-            seach_all.extend(all_paths)
-        return seach_all
+    #         all_paths = []
+    #         for part_path in part_paths:
+    #             temp_paths = glob.glob(os.path.join(part_path, '*.tar'))
+    #             all_paths.extend(temp_paths)
+    #         seach_all.extend(all_paths)
+    #     return seach_all
 
     def __iter__(self):
         """Return an iterator over the shards."""
@@ -564,23 +578,23 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
             wds.tarfile_to_samples(handler=log_and_continue),
         ])
         
-    def handle_text(item):
-        text = item['caption']
-        return tokenizer(text)[0]
-    
-    def handle_key(item):
-        return item['key']
+    def get_text(item):
+        sample = {}
+        sample['image'] = item['jpg']            
+        f1 = np.frombuffer(item['short_feature'], dtype=np.float32)
+        f2 = np.frombuffer(item['long_feature'], dtype=np.float32)
+        sample['text'] =  random.choice([f1, f2])
+        return sample
 
     pipeline.extend([
-        wds.select(filter_no_caption_or_no_image),
+        # wds.select(filter_no_caption_or_no_image),
         wds.decode("pilrgb", handler=log_and_continue),
-        wds.rename(image="jpg;png;jpeg;webp", text="json", key="json"),
-        wds.map_dict(image=preprocess_img, text=handle_text, key=handle_key),
-        # wds.map_dict(image=preprocess_img, text=lambda text: tokenizer(text)[0]),
-        wds.to_tuple("image", "text", "key"),
+        # wds.rename(image="jpg;png;jpeg;webp",),
+        wds.map(get_text),
+        wds.map_dict(image=preprocess_img),
+        wds.to_tuple("image", "text"),
         wds.batched(args.batch_size, partial=not is_train),
     ])
-
     dataset = wds.DataPipeline(*pipeline)
     if is_train:
         if not resampled:
@@ -597,7 +611,7 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
     else:
         # last batches are partial, eval is done on single (master) node
         num_batches = math.ceil(num_samples / args.batch_size)
-
+    
     dataloader = wds.WebLoader(
         dataset,
         batch_size=None,
@@ -739,6 +753,7 @@ def get_csv_dataset(args, preprocess_fn, is_train, epoch=0, tokenizer=None):
     dataloader.num_batches = len(dataloader)
 
     return DataInfo(dataloader, sampler)
+
 def get_json_dataset(args, preprocess_fn, is_train, epoch=0, tokenizer=None):
     input_filename = args.train_data if is_train else args.val_data
     assert input_filename
@@ -790,7 +805,7 @@ def get_retrieval_dataset(args, preprocess_fn, is_train=False, tokenizer=None,
 
     dataloader = DataLoader(
         dataset,
-        batch_size=args.batch_size,
+        batch_size=args.eval_batch_size,
         shuffle=shuffle,
         num_workers=args.workers,
         pin_memory=True,
@@ -873,7 +888,6 @@ def get_mixing_dataset_fn(args, preprocess_train, epoch, tokenizer):
     return DataInfo(dataloader, shared_epoch)
 
 def get_concat_dataset_fn(args, preprocess_train, epoch, tokenizer, is_train=True):
-    # datasets_info = json.load(open(args.train_data_file, 'r'))
     path = args.train_data_file
     datasets_info = yaml.safe_load(open(path,'r'))
     datasets = []
@@ -884,6 +898,10 @@ def get_concat_dataset_fn(args, preprocess_train, epoch, tokenizer, is_train=Tru
         img_root = info['img_root']
         text_feature_path = info['text_feature_path']
         img_feature_path = info.get('img_feature_path', None)
+        ds_type = info.get('type', None)
+        is_wds = False
+        if ds_type is not None:
+            is_wds = ds_type=='wds'
         
         dataset = JsonDataset(
             input_filename=json_file,
@@ -891,7 +909,9 @@ def get_concat_dataset_fn(args, preprocess_train, epoch, tokenizer, is_train=Tru
             img_root=img_root,
             img_feature_path=img_feature_path,
             text_feature_path=text_feature_path,
-            tokenizer=tokenizer)
+            tokenizer=tokenizer,
+            is_wds=is_wds
+            )
         datasets.append(dataset)
     
     dataset = ConcatDataset(datasets)
@@ -959,6 +979,4 @@ def get_data(args, preprocess_fns, epoch=0, tokenizer=None):
         data['ret_coco'] = get_retrieval_dataset(args, preprocess_val, 
                                                    input_filename=args.coco_test_file, img_root=args.coco_img_root, 
                                                    text_feature_path=args.coco_text_features)
-
-
     return data

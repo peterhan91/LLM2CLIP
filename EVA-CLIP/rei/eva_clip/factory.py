@@ -105,8 +105,6 @@ def load_state_dict(checkpoint_path: str, map_location: str='cpu', model_key: st
                 del state_dict[k]
     return state_dict
 
-
-
 def load_checkpoint(model, checkpoint_path, model_key="model|module|state_dict", strict=True):
     state_dict = load_state_dict(checkpoint_path, model_key=model_key, is_openai=False)
     # detect old format and make compatible with new format
@@ -129,14 +127,14 @@ def load_checkpoint(model, checkpoint_path, model_key="model|module|state_dict",
             del state_dict[k]
         if 'visual.head'in k:
             del state_dict[k]
-
+            
     # modify model
     for k in list(state_dict.keys()):
         if 'visual' in k and 'q_bias'in k:
             state_dict[k.replace('q_bias','q_proj.bias')] = state_dict[k]
         if 'visual' in k and 'v_bias'in k:
             state_dict[k.replace('v_bias','v_proj.bias')] = state_dict[k]
-            
+                  
     # resize_clip_pos_embed(state_dict, model)
     incompatible_keys = model.load_state_dict(state_dict, strict=strict)
     logging.info(f"incompatible_keys.missing_keys: {incompatible_keys.missing_keys}")

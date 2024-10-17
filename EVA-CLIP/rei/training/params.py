@@ -148,6 +148,12 @@ def parse_args(args):
         help="Path to imagenet val set for conducting zero shot evaluation.",
     )
     parser.add_argument(
+        "--imagenet-classname-feautres",
+        type=str,
+        default=None,
+        help="Path to imagenet classname features for conducting zero shot evaluation.",
+    )
+    parser.add_argument(
         "--imagenet-val-text",
         type=str,
         default=None,
@@ -162,7 +168,7 @@ def parse_args(args):
     parser.add_argument(
         "--logs",
         type=str,
-        default="rei/logs/",
+        default="logs",
         help="Where to store tensorboard logs. Use None to avoid storing logs.",
     )
     parser.add_argument(
@@ -182,6 +188,9 @@ def parse_args(args):
     )
     parser.add_argument(
         "--batch-size", type=int, default=64, help="Batch size per GPU."
+    )
+    parser.add_argument(
+        "--eval-batch-size", type=int, default=64, help="Batch size per GPU for eval."
     )
     parser.add_argument(
         "--epochs", type=int, default=32, help="Number of epochs to train for."

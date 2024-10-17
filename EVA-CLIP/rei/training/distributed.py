@@ -1,6 +1,7 @@
 import os
 import json
 import torch
+from datetime import timedelta
 
 def print_rank_0(message):
     """If distributed is initialized, print only on rank 0."""
@@ -89,7 +90,8 @@ def init_distributed_device(args):
             # if os.getenv('ENV_TYPE') == 'pytorch':
             torch.distributed.init_process_group(
                 backend=args.dist_backend,
-                init_method=args.dist_url)
+                init_method=args.dist_url,
+                timeout=timedelta(seconds=1800))
             args.world_size = torch.distributed.get_world_size()
             args.rank = torch.distributed.get_rank()
         args.distributed = True

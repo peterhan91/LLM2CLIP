@@ -76,7 +76,10 @@ def evaluate(model, dataloader, tokenizer,  device, precision, distributed=False
     texts_emb = torch.cat(batch_texts_emb_list)
 
     # get the score for each text and image pair
-    scores  = texts_emb @ images_emb.t()
+    try:
+        scores  = texts_emb @ images_emb.t()
+    except:
+        scores = texts_emb.float() @ images_emb.t().float()
 
     # construct a the positive pair matrix, which tells whether each text-image pair is a positive or not
     positive_pairs = torch.zeros_like(scores, dtype=bool)
@@ -188,6 +191,36 @@ def retrieval_global(model, dataloader, tokenizer,  device, precision, distribut
     metrics = {}
     metrics[f"image_retrieval_recall@1"] = t2i
     metrics[f"text_retrieval_recall@1"] = i2t
+
+    def compute_recall(features1, features2, k_values):
+        recalls = {}
+        for k in k_values:
+            correct = 0
+            total = 0
+            for i in range(features1.shape[0]):
+                sim = features1[i] @ features2.T
+                sim = sim.squeeze()
+                _, topk_indices = torch.topk(sim, k)
+                
+                if i in topk_indices:
+                    correct += 1
+                total += 1
+            
+            recall_at_k = correct / total
+            recalls[f"recall@{k}"] = recall_at_k
+        
+        return recalls
+    
+    k_values = [1, 5, 10, 25, 50]
+    t2i_recalls = compute_recall(text_features, image_features, k_values)
+    for k, recall in t2i_recalls.items():
+        metrics[f"image_retrieval_{k}"] = recall
+    
+    # Image to Text Retrieval
+    i2t_recalls = compute_recall(image_features, text_features, k_values)
+    for k, recall in i2t_recalls.items():
+        metrics[f"text_retrieval_{k}"] = recall
+
     return metrics
 
 
@@ -200,6 +233,11 @@ def retrieval_eval(model, data, epoch, args):
     tokenizer = None
     model.to(args.device)
     collect_results = {}
+    if 'DOCCI'  in data:
+        logging.info('Starting DOCCI.')
+        results = retrieval_global(model, data['DOCCI'].dataloader, tokenizer, args.device, args.precision)
+        for key in results.keys():
+            collect_results['DOCCI/'+ key] = results[key]
     if 'sharegpt4v'  in data:
         logging.info('Starting Sharegpt4v.')
         results = retrieval_global(model, data['sharegpt4v'].dataloader, tokenizer, args.device, args.precision)

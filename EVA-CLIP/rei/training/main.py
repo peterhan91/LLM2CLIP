@@ -159,15 +159,9 @@ def main(args):
                 target_modules=["q_proj",'v_proj','k_proj'],
                 lora_dropout=0.1,
                 bias="none",
-                # layers_to_transform=[i for i in range(2,6)],
-                # layers_pattern='Block'
             )
-            # import ipdb
-            # ipdb.set_trace() 
             model.visual = get_peft_model(model.visual, config)
-            for param in model.visual.head.parameters():
-                param.requires_grad = True
-        
+
         total_visual_n_parameters = sum(p.numel() for p in model.visual.parameters())
         logging.info(f'number of visual params: {total_visual_n_parameters}')
     if hasattr(model, 'text'):
@@ -326,6 +320,7 @@ def main(args):
         wandb.init(
             project=args.wandb_project_name,
             name=args.name,
+            id=args.name,
             notes=args.wandb_notes,
             tags=[],
             config=vars(args),
@@ -346,7 +341,7 @@ def main(args):
         return
 
     # torch.cuda.synchronize()
-    evaluate(model, data, -1, args, writer)
+    # evaluate(model, data, -1, args, writer)
     for epoch in range(start_epoch, args.epochs):
         if is_master(args):
             logging.info(f'Start epoch {epoch}')

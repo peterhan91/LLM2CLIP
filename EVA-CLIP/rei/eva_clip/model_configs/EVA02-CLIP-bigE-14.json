@@ -1,5 +1,5 @@
 {
-    "embed_dim": 1024,
+    "embed_dim": 1280,
     "vision_cfg": {
         "image_size": 224,
         "layers": 64,
@@ -14,6 +14,7 @@
         "fusedLN": true
     },
     "text_cfg": {
+        "use_embedding": true,
         "context_length": 77,
         "vocab_size": 49408,
         "width": 1024,
