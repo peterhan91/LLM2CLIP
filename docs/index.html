@@ -232,8 +232,7 @@
               <div class="row is-full-width">
                 <img src="static/images/main.svg" alt="COCO Score">
                   <span ><b>LLM2CLIP Overview.</b>  After applying caption contrastive fine-tuning to the LLM, the increased textual
-                    discriminability enables more effective CLIP training. We leverage the open-world knowledge and general capa-
-                    bilities of the LLM to better process dense captions, addressing the previous limitations of the pretrained CLIP
+                    discriminability enables more effective CLIP training. We leverage the open-world knowledge and general capabilities of the LLM to better process dense captions, addressing the previous limitations of the pretrained CLIP
                     visual encoder and providing richer, higher-dimensional textual supervision. Experimental results demonstrate
                     that LLM2CLIP can make any SOTA CLIP model even more SOTA ever</span>
               </div>
@@ -241,6 +240,7 @@
       </div>
   </div>
 </div>
+
 <div class="container is-max-desktop">
   <div class="container is-max-widescreen">
       <div class="rows">
@@ -248,18 +248,57 @@
               <div class="row is-full-width">
               <div style="text-align: center;">
                   <img src="static/images/radar_paper(4).png" alt="radar figure" style="width: 60%;">
-
               </div>
               <div style="text-align: center;">
                 <span ><b>LLM2CLIP can make SOTA CLIP even more SOTA ever.</b> </span>
-
-
             </div>
               </div>
           </div>
       </div>
   </div>
 </div>
+
+<div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
+      <div class="rows">
+          <div class="rows is-centered ">
+              <div class="row is-full-width">
+                  <h2 class="title is-3"><span class="dvima">Key Challenges with Existing CLIP</span></h2>
+                  <p style="font-size: 100%">
+                    Current versions of CLIP face several limitations:
+                    <ul>
+                      <li>The text encoder has a short context window of only 77 tokens, limiting its ability to understand lengthy inputs.</li>
+                      <li>The text encoder is relatively weak, often criticized for its inability to comprehend complex text, functioning nearly as a bag-of-words model.</li>
+                    </ul>
+                  </p>
+
+                  <h2 class="title is-3"><span class="dvima">Why Integrate LLM with CLIP?</span></h2>
+                  <p style="font-size: 100%">
+                    <ul>
+                      <li><b>Extended Input Window:</b> The LLM greatly expands CLIP's input window, allowing richer textual context.</li>
+                      <li><b>Enhanced Understanding:</b> With LLM's help, CLIP can better comprehend dense and complex captions, improving text-image alignment.</li>
+                      <li><b>Open-World Knowledge:</b> LLM supplements open-world knowledge, allowing CLIP to align multimodal features more globally, enhancing training efficiency.</li>
+                    </ul>
+                  </p>
+
+                  <h2 class="title is-3"><span class="dvima">Our Approach</span></h2>
+                  <p style="font-size: 100%">
+                    We designed a Caption-to-Caption contrastive learning strategy, training the LLM to better differentiate between captions of the same or different images. This enhances the output space's separability, similar to an "LLM2Vec" approach. The LLM gradients were frozen while efficiently training CLIP's visual encoder on limited data, resulting in substantial performance improvements.
+                  </p>
+
+                  <h2 class="title is-3"><span class="dvima">What Can You Achieve with LLM2CLIP?</span></h2>
+                  <p style="font-size: 100%">
+                    <ul>
+                      <li><b>Enhanced CLIP Models:</b> Use our code to fine-tune pretrained CLIP models with representative dense captions or task-specific image-text datasets, making CLIP stronger for various tasks.</li>
+                      <li><b>Out-of-the-Box Power:</b> Directly use our enhanced CLIP models, which have been made significantly more powerful with LLM guidance.</li>
+                    </ul>
+                  </p>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
 
 
 
