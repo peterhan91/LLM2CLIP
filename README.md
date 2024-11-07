@@ -1,4 +1,4 @@
-# LLM2CLIP: Extending the Capability Boundaries of CLIP through Large Language Models
+# LLM2CLIP: Powerful Language Model Unlock Richer Visual Representation
 ## Introduction
 
 LLM2CLIP aims to embrace the power of LLMs to unlock CLIP’s potential. By fine-tuning the LLM in the caption space using contrastive learning, LLM2CLIP extracts and amplifies textual capabilities into output embeddings. This process significantly enhances the textual discriminability of the output layer.
