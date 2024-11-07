@@ -2,12 +2,12 @@
 
 Welcome to the official repository for **LLM2CLIP**! This project leverages large language models (LLMs) as powerful textual teachers for CLIP’s visual encoder, enabling more nuanced and comprehensive multimodal learning. 
 
-Project Homepage: [aka.ms/llm2clip](https://aka.ms/llm2clip)  
-HuggingFace Collection: [huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c)  
+[![Project Homepage](https://img.shields.io/badge/Project-Homepage-blue)](https://aka.ms/llm2clip) [![HuggingFace Collection](https://img.shields.io/badge/HuggingFace-Collection-orange)](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c)  
 Paper: Accepted to NeurIPS 2024 Workshop SSL (link coming soon)
 
 ---
-![custom_radar_chart_no_outer_grid.svg](docs%2Fstatic%2Fimages%2Fcustom_radar_chart_no_outer_grid.svg)
+<img src="docs/static/images/radar_paper(4).png" style="max-width: 800px;">
+
 ## Challenges with Existing CLIP
 
 Current versions of CLIP face several limitations:
@@ -15,6 +15,8 @@ Current versions of CLIP face several limitations:
 - The text encoder is relatively weak, often criticized for its inability to comprehend complex text, functioning nearly as a bag-of-words model.
 
 ## Why Integrate LLM with CLIP?
+
+Providing unimaginable cross-language capabilities. Our LLM2CLIP fine-tuned on purely English corpus even outperforms Chinese CLIP.
 
 1. **Extended Input Window**: The LLM greatly expands CLIP's input window, allowing richer textual context.
 2. **Enhanced Understanding**: With LLM's help, CLIP can better comprehend dense and complex captions, improving text-image alignment.
@@ -68,4 +70,4 @@ Stay tuned for updates on pretrained models and datasets, which will be made ava
 
 ## ❤️ Acknowledgement
 
-Our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP).
+Currently, our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP).
