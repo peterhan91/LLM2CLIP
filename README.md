@@ -68,4 +68,4 @@ Stay tuned for updates on pretrained models and datasets, which will be made ava
 
 ## ❤️ Acknowledgement
 
-Currently, our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP).
+Our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP).
