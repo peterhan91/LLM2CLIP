@@ -28,7 +28,8 @@ LLMs have strong text encoding capabilities hidden within the model, but their o
 
 ## Our Approach
 
-We designed a Caption-to-Caption contrastive learning strategy, training the LLM to better differentiate between captions of the same or different images. This enhances the output space's separability, similar to an "LLM2Vec" approach. The LLM gradients were frozen while efficiently training CLIP's visual encoder on limited data, resulting in substantial performance improvements.
+We designed a Caption-to-Caption contrastive learning strategy, training the LLM to better differentiate between captions of the same or different images. This enhances the output space's separability, similar to an "LLM2Vec" approach. 
+The LLM gradients were frozen while efficiently training CLIP's visual encoder on limited data, resulting in substantial performance improvements.
 
 ## What Can You Achieve with LLM2CLIP?
 
