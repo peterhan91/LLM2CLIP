@@ -33,10 +33,12 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
-          destination: ./_site
+          source: ./docs              # 指定 docs 作为 Jekyll 源目录
+          destination: ./docs/_site    # 构建输出路径
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site            # 上传构建的 _site 目录
 
   # Deployment job
   deploy:
