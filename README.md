@@ -79,7 +79,8 @@ Currently, our code is built on top of [eva-clip](https://github.com/baaivision/
 
 If you use our work, please cite:
 
-```@misc{huang2024llm2clippowerfullanguagemodel,
+```
+@misc{huang2024llm2clippowerfullanguagemodel,
       title={LLM2CLIP: Powerful Language Model Unlock Richer Visual Representation}, 
       author={Weiquan Huang and Aoqi Wu and Yifan Yang and Xufang Luo and Yuqing Yang and Liang Hu and Qi Dai and Xiyang Dai and Dongdong Chen and Chong Luo and Lili Qiu},
       year={2024},
