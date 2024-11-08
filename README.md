@@ -1,4 +1,4 @@
-# LLM2CLIP: Unlocking Richer Visual Representations with a Powerful Language Model
+# LLM2CLIP: Powerful Language Model Unlock Richer Visual Representation
 
 Welcome to the official repository for **LLM2CLIP**! This project leverages large language models (LLMs) as powerful textual teachers for CLIP's visual encoder, enabling more nuanced and comprehensive multimodal learning.
 
