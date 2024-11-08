@@ -2,8 +2,8 @@
 
 Welcome to the official repository for **LLM2CLIP**! This project leverages large language models (LLMs) as powerful textual teachers for CLIP’s visual encoder, enabling more nuanced and comprehensive multimodal learning. 
 
-[![Project Homepage](https://img.shields.io/badge/Project-Homepage-blue)](https://aka.ms/llm2clip) [![HuggingFace Collection](https://img.shields.io/badge/HuggingFace-Collection-orange)](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c)  
-Paper: Accepted to NeurIPS 2024 Workshop SSL (link coming soon)
+[![Paper](https://img.shields.io/badge/Paper-arXiv-red)](https://arxiv.org/abs/2411.04997) [![Project Homepage](https://img.shields.io/badge/Project-Homepage-blue)](https://aka.ms/llm2clip) [![HuggingFace Collection](https://img.shields.io/badge/HuggingFace-Collection-orange)](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c)  
+Paper: Accepted to NeurIPS 2024 Workshop SSL 
 
 ---
 <img src="docs/static/images/radar_paper(4).png" style="max-width: 800px;">
@@ -28,7 +28,7 @@ LLMs have strong text encoding capabilities hidden within the model, but their o
 
 ## Our Approach
 
-We designed a Caption-to-Caption contrastive learning strategy, training the LLM to better differentiate between captions of the same or different images. This enhances the output space's separability, similar to an "LLM2Vec" approach. 
+We designed a Caption-to-Caption contrastive learning strategy, training the LLM to better differentiate between captions of the same or different images. This This caption-caption discrimination enhances the output space's separability enhances the output space's separability. 
 The LLM gradients were frozen while efficiently training CLIP's visual encoder on limited data, resulting in substantial performance improvements.
 
 ## What Can You Achieve with LLM2CLIP?
@@ -39,12 +39,14 @@ The LLM gradients were frozen while efficiently training CLIP's visual encoder o
 ---
 
 ## News 🚀🚀🚀
-- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on HuggingFace. More model versions and datasets will be added to HuggingFace shortly.
+- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on  [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c). More model versions and datasets will be added to HuggingFace shortly.
 - **[2024-11-01]** Our paper has been accepted to the NeurIPS 2024 SSL Workshop!
 
 ---
 ![main.svg](docs%2Fstatic%2Fimages%2Fmain.svg)
+
 ## Model Zoo (Keep Updating)
+
 
 Stay tuned for updates on pretrained models and datasets, which will be made available in the [HuggingFace Model Zoo](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c).
 
