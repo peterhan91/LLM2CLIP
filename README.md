@@ -73,4 +73,18 @@ Stay tuned for updates on pretrained models and datasets, which will be made ava
 
 ## ❤️ Acknowledgement
 
-Currently, our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP).
+Currently, our code is built on top of [eva-clip](https://github.com/baaivision/EVA/tree/master/EVA-CLIP) and .
+
+## Citation
+
+If you use our work, please cite:
+
+```@misc{huang2024llm2clippowerfullanguagemodel,
+      title={LLM2CLIP: Powerful Language Model Unlock Richer Visual Representation}, 
+      author={Weiquan Huang and Aoqi Wu and Yifan Yang and Xufang Luo and Yuqing Yang and Liang Hu and Qi Dai and Xiyang Dai and Dongdong Chen and Chong Luo and Lili Qiu},
+      year={2024},
+      eprint={2411.04997},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2411.04997}, 
+}```
