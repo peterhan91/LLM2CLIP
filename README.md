@@ -42,7 +42,8 @@ Through this strategy, we better utilized the LLM's power to comprehend and proc
 ---
 
 ## News 🚀🚀🚀
-- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c). More model versions and datasets coming soon!
+- **[2024-11-08]** We are currently training a **scaled-up** version with ten times the training dataset, along with upcoming updates: EVA ViT-E, InternVL-300M, SigCLIP-SO-400M, and more VLLM results trained with LLM2CLIP. Stay tuned for the most powerful CLIP models, and thank you for your star!
+- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c). 
 - **[2024-11-01]** Our paper was accepted to the NeurIPS 2024 SSL Workshop!
 
 ---
