@@ -1,4 +1,3 @@
-cd rei
 MODEL=EVA02-CLIP-L-14-336
 PRETRAINED=eva_clip
 python -m torch.distributed.launch --nproc_per_node=8 \
