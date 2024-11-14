@@ -1,11 +1,19 @@
-# LLM2CLIP: Powerful Language Model Unlock Richer Visual Representation
+# LLM2CLIP: Powerful Language Model Unlocks Richer Visual Representation
 
 Welcome to the official repository for **LLM2CLIP**! This project leverages large language models (LLMs) as powerful textual teachers for CLIP's visual encoder, enabling more nuanced and comprehensive multimodal learning.
 
 [![Paper](https://img.shields.io/badge/Paper-arXiv-red)](https://arxiv.org/abs/2411.04997) [![Project Homepage](https://img.shields.io/badge/Project-Homepage-blue)](https://aka.ms/llm2clip) [![HuggingFace Collection](https://img.shields.io/badge/HuggingFace-Collection-orange)](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c)  
-**Paper:** Preprinted and under-review now. Accepted to NeurIPS 2024 Workshop: Self-Supervised Learning - Theory and Practice
+**Paper:** Accepted to NeurIPS 2024 Workshop: Self-Supervised Learning - Theory and Practice
 
 ---
+
+## News 🚀🚀🚀
+- **[2024-11-08]** We are currently training a **scaled-up** version with ten times the training dataset, along with upcoming updates: EVA ViT-E, InternVL-300M, SigCLIP-SO-400M, and more VLLM results trained with LLM2CLIP. Stay tuned for the most powerful CLIP models, and thank you for your star!
+- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c).
+- **[2024-11-01]** Our paper was accepted to the NeurIPS 2024 SSL Workshop!
+
+---
+
 <img src="docs/static/images/radar_paper(4).png" style="max-width: 800px;">
 
 ## Challenges with Existing CLIP
@@ -41,12 +49,6 @@ Through this strategy, we better utilized the LLM's power to comprehend and proc
 
 ---
 
-## News 🚀🚀🚀
-- **[2024-11-08]** We are currently training a **scaled-up** version with ten times the training dataset, along with upcoming updates: EVA ViT-E, InternVL-300M, SigCLIP-SO-400M, and more VLLM results trained with LLM2CLIP. Stay tuned for the most powerful CLIP models, and thank you for your star!
-- **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c). 
-- **[2024-11-01]** Our paper was accepted to the NeurIPS 2024 SSL Workshop!
-
----
 ![main.svg](docs/static/images/main.svg)
 
 ## Model Zoo (Continuously Updated)
