@@ -8,6 +8,7 @@ Welcome to the official repository for **LLM2CLIP**! This project leverages larg
 ---
 
 ## News 🚀🚀🚀
+- **[2024-11-18]** Our Caption-Contrastive finetuned Llama3-8B-CC released on [HuggingFace](https://huggingface.co/microsoft/LLM2CLIP-Llama-3-8B-Instruct-CC-Finetuned), we will try release more version.
 - **[2024-11-08]** We are currently training a **scaled-up** version with ten times the training dataset, along with upcoming updates: EVA ViT-E, InternVL-300M, SigCLIP-SO-400M, and more VLLM results trained with LLM2CLIP. Stay tuned for the most powerful CLIP models, and thank you for your star!
 - **[2024-11-06]** OpenAI's CLIP and EVA02's ViT base and large models are now available on [HuggingFace](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c).
 - **[2024-11-01]** Our paper was accepted to the NeurIPS 2024 SSL Workshop!
