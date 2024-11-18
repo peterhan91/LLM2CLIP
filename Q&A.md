@@ -32,7 +32,7 @@
 >
 > BTW, we plan to release scaled-up LLM2CLIP models (10-100x larger) next quarter. These models will inherit our general-purpose parameters, potentially making them even more powerful. Please stay tuned to our GitHub!
 
-## Q4:
+## Q3:
 
 > **Q: Thank you so much for such an outstanding work. I have a couple of questions regarding the fine-tuning process described in Section 3.2, particularly around the integration of loss functions and datasets:**
 >
@@ -42,7 +42,7 @@
 >
 > Looking forward to your insights on this!
 >
-> ![A4](https://via.placeholder.com/15/red/000000?text=+) **A:** Thank you for your question. I’m glad to clarify.
+> ![A3](https://via.placeholder.com/15/red/000000?text=+) **A:** Thank you for your question. I’m glad to clarify.
 >
 > **Loss Functions Integration:** We use the supervised SimCSE loss to make different captions of the same image positive samples for each other, while captions of different images serve as negative samples. This loss function is key to our method, allowing the LLM to provide meaningful supervisory signals to the image. However, the Masked Next Token Prediction (MNTP) was an initial stage we employed before using the supervised SimCSE loss; it can be understood as an earlier step in training. We first conduct MNTP, followed by supervised SimCSE loss, in a two-stage process. In practice, MNTP has little impact on the results, so removing it does not affect the conclusions. However, for optimal performance, we still chose to use MNTP before applying supervised SimCSE loss.
 >
@@ -50,7 +50,7 @@
 >
 > If you have more questions, please feel free to ask.
 
-## Q5:
+## Q4:
 
 > **Q: LLM2CLIP does not bring out significant improvements on ImageNet-1k only or all these zero-shot benchmarks?**
 >
@@ -58,11 +58,11 @@
 >
 > **It's reasonable to improve the performances of VLMs on the SQA and Wizwiz benchmarks while it's strange to drop the performances on the fundamental benchmarks such as MME.**
 >
-> ![A5](https://via.placeholder.com/15/purple/000000?text=+) **A:** We haven’t specifically tested it, and the improvement on ImageNet is indeed not very noticeable. With OpenAI’s CLIP, we can achieve about a one-point improvement, which is relatively modest compared to other retrieval tasks. My guess is that we used a large amount of dense captions, which may cause the model to favor more complex text. However, we have found in experiments that ImageNet performance is strongly correlated with data volume, possibly related to the word distribution used during alignment. We only used 15 million data points for the alignment in LLM fine-tuning. In the next version, we’ll increase the training data for LLM2CLIP by tens of times, so we plan to re-evaluate it then.
+> ![A4](https://via.placeholder.com/15/purple/000000?text=+) **A:** We haven’t specifically tested it, and the improvement on ImageNet is indeed not very noticeable. With OpenAI’s CLIP, we can achieve about a one-point improvement, which is relatively modest compared to other retrieval tasks. My guess is that we used a large amount of dense captions, which may cause the model to favor more complex text. However, we have found in experiments that ImageNet performance is strongly correlated with data volume, possibly related to the word distribution used during alignment. We only used 15 million data points for the alignment in LLM fine-tuning. In the next version, we’ll increase the training data for LLM2CLIP by tens of times, so we plan to re-evaluate it then.
 >
 > The improvement of long captions or dense captions for CLIP is quite limited. Works like LongCLIP (https://arxiv.org/abs/2403.15378) and DCI (https://arxiv.org/abs/2312.08578) specifically address this issue. The problem here is that the original CLIP text encoder lacks the ability to understand such information or handle captions of this length. However, LLM2CLIP, even when trained on a fully short-text dataset, still demonstrates outstanding and leading performance, as shown in Table 5 of the paper.
 
-## Q6:
+## Q5:
 
 > **Q: Hello!**
 >
