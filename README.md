@@ -57,6 +57,7 @@ Through this strategy, we better utilized the LLM's power to comprehend and proc
 Stay tuned for updates on pretrained models and datasets, which will be made available in the [HuggingFace Model Zoo](https://huggingface.co/collections/microsoft/llm2clip-672323a266173cfa40b32d4c).
 
 ---
+For frequently asked questions, please see our [FAQ](FAQ.md). Welcome to contact us.
 
 ## 💻 Installation Guide
 
@@ -76,6 +77,8 @@ Stay tuned for updates on pretrained models and datasets, which will be made ava
    ```bash
    sh run.sh
    ```
+   
+
 ## ❤️ Acknowledgements
 
 Our code is built on top of [EVA-CLIP](https://github.com/baaivision/EVA/tree/master/EVA-CLIP). We would like to thank the EVA team for their foundational work.
