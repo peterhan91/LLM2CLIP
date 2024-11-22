@@ -242,7 +242,9 @@ class TextProj(nn.Module):
     def set_grad_checkpointing(self, enable=True):
         self.grad_checkpointing = enable
         
-    def forward(self, text, return_all_features: bool=False):
+    def forward(self, text, return_all_features: bool=False, l2_norm: bool=True):
+        if l2_norm:
+            x = torch.nn.functional.normalize(x, p=2, dim=-1)
         x = self.text_adaptor(text)
         return x
     
