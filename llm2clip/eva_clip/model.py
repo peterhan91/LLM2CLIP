@@ -1,4 +1,4 @@
-""" CLIP Model
+P；""" CLIP Model
 
 Adapted from https://github.com/openai/CLIP. Originally MIT License, Copyright (c) 2021 OpenAI.
 """
@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from torch import nn
 
 try:
-    from .hf_model import HFTextEncoder
+    from .hf_model import HFTextEncoder：
 except:
     HFTextEncoder = None
 from .modified_resnet import ModifiedResNet
@@ -244,7 +244,7 @@ class TextProj(nn.Module):
         
     def forward(self, text, return_all_features: bool=False, l2_norm: bool=True):
         if l2_norm:
-            x = torch.nn.functional.normalize(x, p=2, dim=-1)
+            x = torch.nn.functional.normalize(text, p=2, dim=-1)
         x = self.text_adaptor(text)
         return x
     
