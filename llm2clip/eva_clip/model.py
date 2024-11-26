@@ -1,4 +1,4 @@
-P；""" CLIP Model
+""" CLIP Model
 
 Adapted from https://github.com/openai/CLIP. Originally MIT License, Copyright (c) 2021 OpenAI.
 """
@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from torch import nn
 
 try:
-    from .hf_model import HFTextEncoder：
+    from .hf_model import HFTextEncoder
 except:
     HFTextEncoder = None
 from .modified_resnet import ModifiedResNet
