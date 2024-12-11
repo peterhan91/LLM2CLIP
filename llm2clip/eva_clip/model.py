@@ -65,6 +65,7 @@ class CLIPVisionCfg:
 @dataclass
 class CLIPTextCfg:
     use_embedding: bool = True
+    llm_embedding_dim: int = 4096
     context_length: int = 77
     vocab_size: int = 49408
     width: int = 512
@@ -189,7 +190,7 @@ def _build_text_tower(
             masked_language_modeling=text_cfg.masked_language_modeling
        )
     elif text_cfg.use_embedding:
-        text = TextProj(embedding_dim=4096, output_dim=embed_dim)
+        text = TextProj(embedding_dim=text_cfg.llm_embedding_dim, output_dim=embed_dim)
     else:
         act_layer = QuickGELU if quick_gelu else nn.GELU
         norm_layer = LayerNorm
