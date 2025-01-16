@@ -519,6 +519,35 @@ def get_real_wds_size(shards):
     return count
 
 
+find_column_url = lambda x: x.replace(".tar", "_text_embeddings.tar")
+def add_column(src, find_column_url=find_column_url):
+    """Given an iterator over a dataset, add an extra column from a separate dataset."""
+    last_url = None
+    column_src = None
+    for sample in src:
+        # We use the __url__ field to keep track of which shard we are working on.
+        # We then open the corresponding URL for the extra column data if necessary.
+        if last_url != sample["__url__"]:
+            column_url = find_column_url(sample["__url__"])
+            print("*** opening column_url", column_url)
+            # column_src = iter(wds.WebDataset(column_url, shardshuffle=False))
+            column_src = wds.tarfile_samples([dict(url=column_url)])
+            last_url = sample["__url__"]
+        # Read the next sample from the extra column data.
+        try:
+            extra = next(column_src)
+        except StopIteration:
+            column_src = wds.tarfile_samples([dict(url=column_url)])
+            extra = next(column_src)
+            logging.info(f"*** column_src exhausted, reset")
+        # Check that the keys match.
+        assert extra["__key__"] == sample["__key__"]
+        # Update the sample with the extra data.
+        for k, v in extra.items():
+            if k[0] != "_":
+                sample[k] = v
+        yield sample
+
 
 def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokenizer=None):
     input_shards = args.train_data if is_train else args.val_data
@@ -564,6 +593,7 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
         pipeline.extend([
             # at this point, we have an iterator over the shards assigned to each worker at each node
             tarfile_to_samples_nothrow,  # wds.tarfile_to_samples(handler=log_and_continue),
+            add_column,
             wds.shuffle(
                 bufsize=_SAMPLE_SHUFFLE_SIZE,
                 initial=_SAMPLE_SHUFFLE_INITIAL,
@@ -577,12 +607,13 @@ def get_wds_dataset(args, preprocess_img, is_train, epoch=0, floor=False, tokeni
             # at this point, we have an iterator over the shards assigned to each worker
             wds.tarfile_to_samples(handler=log_and_continue),
         ])
-        
+    
+    _KEYS = ["shortsv_captions", "longsv_captions"]
     def get_text(item):
         sample = {}
         sample['image'] = item['jpg']            
-        f1 = np.frombuffer(item['short_feature'], dtype=np.float32)
-        f2 = np.frombuffer(item['long_feature'], dtype=np.float32)
+        f1 = np.frombuffer(item[_KEYS[0]], dtype=np.float32)
+        f2 = np.frombuffer(item[_KEYS[1]], dtype=np.float32)
         sample['text'] =  random.choice([f1, f2])
         return sample
 
