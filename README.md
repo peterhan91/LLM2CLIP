@@ -61,15 +61,25 @@ Stay tuned for updates on pretrained models and datasets, which will be made ava
 ## 💻 Installation Guide
 
 1. **Create the environment**:
-
    ```bash
    conda create -n llm2clip python=3.8
    conda activate llm2clip
    pip install -r requirements.txt
    ```
-2. **Data Preparation**:
+2. **Data Preparation for LLM2CLIP**:
+   
+   ```bash
+   cd llm2clip/data
 
-   *(Coming Soon)*
+   # training datasets
+   DATASET=cc3m #options: "cc3m", "cc12m", "yfcc15m"
+   bash download_dataset.sh $DATASET
+   python extract_embedding.py $DATASET
+
+   # eval datasets
+   bash setup_eval_datasets.sh
+   python extract_eval_embedding.py
+   ```
 
 3. **🔥 Training**:
 

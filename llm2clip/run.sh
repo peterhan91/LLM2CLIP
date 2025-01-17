@@ -10,7 +10,7 @@ python -m torch.distributed.launch --nproc_per_node=8 \
         --report-to="tensorboard, wandb" \
         --wandb-project-name="LLM2CLIP" \
         --wandb-notes="EVA02-CLIP-L-14-336" \
-        --train-data-list "data/cc3m/cc3m-train-{00..0287}.tar;data/cc12m/cc12m-train-{00..1001}.tar" \
+        --train-data-list "data/cc3m/{00..00287}.tar;data/cc12m/{00..01001}.tar" \
         --train-num-samples-list 2873538  10000225 \
         --eval-data-file=training/eval_datasets.yaml \
         --pretrained=${PRETRAINED} \
